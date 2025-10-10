@@ -1,8 +1,9 @@
 import User from '@/model/User';
 import bcrypt from 'bcryptjs';
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthConfig, Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { NextRequest } from 'next/server';
 
 export const authOptions = {
   providers: [
@@ -19,16 +20,12 @@ export const authOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) return null;
         const password = credentials.password as string;
-
         const user = await User.findOne({ email: credentials.email }).select(
           '+password'
         );
         if (!user || !user.password) return null;
-        const userPassword = user.password as string;
-
-        const isValid = await bcrypt.compare(password, userPassword);
+        const isValid = await bcrypt.compare(password, user.password as string);
         if (!isValid) return null;
-
         return {
           id: user._id.toString(),
           email: user.email,
@@ -37,6 +34,23 @@ export const authOptions = {
       },
     }),
   ],
-};
+  session: {
+    strategy: 'jwt',
+  },
+  callbacks: {
+    authorized(params: { request: NextRequest; auth: Session | null }) {
+      const { request, auth } = params;
+      const { pathname } = request.nextUrl;
+      const protectedRoutes = ['/dashboard'];
+      const isProtectedRoute = protectedRoutes.some((route) =>
+        pathname.startsWith(route)
+      );
+      if (isProtectedRoute) {
+        return !!auth?.user;
+      }
+      return true;
+    },
+  },
+} satisfies NextAuthConfig;
 
-export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
