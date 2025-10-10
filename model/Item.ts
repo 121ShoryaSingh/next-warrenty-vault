@@ -27,6 +27,10 @@ export const ItemSchema: Schema<IItem> = new Schema(
       required: true,
       trim: true,
     },
+    category: {
+      type: String,
+      required: true,
+    },
     purchaseDate: {
       type: Date,
       required: true,
