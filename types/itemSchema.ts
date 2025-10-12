@@ -4,11 +4,11 @@ export const itemSchema = z.object({
   title: z.string(),
   category: z.string(),
   purchaseDate: z.date(),
+  warrantyExpiry: z.string(),
   price: z.number(),
   receipts: z
     .array(
       z.object({
-        url: z.url(),
         key: z.string(),
       })
     )

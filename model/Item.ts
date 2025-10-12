@@ -9,7 +9,7 @@ export interface IItem extends Document {
   title: string;
   category: string;
   purchaseDate: Date;
-  warrentyExpiry: Date;
+  warrantyExpiry: Date;
   price: number;
   recepts: IRecept[];
   notes?: string;
@@ -35,7 +35,7 @@ export const ItemSchema: Schema<IItem> = new Schema(
       type: Date,
       required: true,
     },
-    warrentyExpiry: {
+    warrantyExpiry: {
       type: Date,
       required: true,
     },
@@ -45,7 +45,7 @@ export const ItemSchema: Schema<IItem> = new Schema(
     },
     recepts: [
       {
-        url: { type: String, required: true },
+        key: { type: String, required: true },
       },
     ],
   },
