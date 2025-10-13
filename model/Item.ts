@@ -52,5 +52,5 @@ export const ItemSchema: Schema<IItem> = new Schema(
   { timestamps: true }
 );
 
-export default (mongoose.models.Item as Model<IItem>) ||
+export default (mongoose.models?.Item as Model<IItem>) ||
   mongoose.model<IItem>('Item', ItemSchema);
