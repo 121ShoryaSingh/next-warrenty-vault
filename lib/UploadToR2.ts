@@ -5,6 +5,7 @@ export async function UploadToR2(file: File) {
     const response = await axios.post('/api/PreSignedUrl', {
       fileName: file.name,
       fileType: file.type,
+      operation: 'upload',
     });
 
     const { signedUrl, key } = await response.data;
