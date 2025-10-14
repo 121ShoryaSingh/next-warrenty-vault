@@ -1,6 +1,6 @@
 import { Db } from '@/lib/Db';
 import User from '@/model/User';
-import { registerSchema } from '@/types/register';
+import { registerSchema } from '@/types/registerSchema';
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 

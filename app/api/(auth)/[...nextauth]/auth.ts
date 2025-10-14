@@ -1,3 +1,4 @@
+import { Db } from '@/lib/Db';
 import User from '@/model/User';
 import bcrypt from 'bcryptjs';
 import NextAuth, { NextAuthConfig, Session } from 'next-auth';
@@ -18,6 +19,7 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        await Db();
         if (!credentials?.email || !credentials.password) return null;
         const password = credentials.password as string;
         const user = await User.findOne({ email: credentials.email }).select(
@@ -38,7 +40,7 @@ export const authOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    authorized(params: { request: NextRequest; auth: Session | null }) {
+    async authorized(params: { request: NextRequest; auth: Session | null }) {
       const { request, auth } = params;
       const { pathname } = request.nextUrl;
       const protectedRoutes = ['/dashboard'];
