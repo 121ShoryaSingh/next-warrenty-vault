@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,20 +16,54 @@ const r2 = new S3Client({
 });
 
 export default async function POST(req: NextRequest) {
-  const { fileName, fileType } = await req.json();
+  try {
+    const { fileName, fileType, operation, key } = await req.json();
 
-  const key = `image/${Date.now()}-${fileName}`;
+    // For generating signed Url to upload.
+    if (operation === 'upload') {
+      const key = `image/${Date.now()}-${fileName}`;
 
-  const command = new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET_NAME!,
-    Key: key,
-    ContentType: fileType,
-  });
+      const command = new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: key,
+        ContentType: fileType,
+      });
 
-  const signedUrl = await getSignedUrl(r2, command, { expiresIn: 300 });
+      const signedUrl = await getSignedUrl(r2, command, { expiresIn: 300 });
 
-  return NextResponse.json(
-    { message: 'Recept uploaded successfully', signedUrl, key },
-    {}
-  );
+      return NextResponse.json({
+        message: 'Recept uploaded successfully',
+        signedUrl,
+        key,
+      });
+
+      // for generating pre signed url for download.
+    } else if (operation === 'download') {
+      if (!key) {
+        return NextResponse.json(
+          {
+            message: 'key is required for download',
+          },
+          { status: 400 }
+        );
+      }
+      const downloadCommand = new GetObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME,
+        Key: key,
+      });
+      const signedUrl = await getSignedUrl(r2, downloadCommand, {
+        expiresIn: 3000,
+      });
+      return NextResponse.json({
+        signedUrl,
+        operation: 'download',
+      });
+    }
+  } catch (error) {
+    console.error('Presigned URL generation error: ', error);
+    return NextResponse.json(
+      { error: 'Failed to generate URL' },
+      { status: 500 }
+    );
+  }
 }
