@@ -9,7 +9,7 @@ export default async function POST(req: NextRequest) {
   try {
     //Checking user session
     const session = await auth();
-    const sessionEmail = !session?.user?.email;
+    const sessionEmail = session?.user?.email;
     if (!sessionEmail) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
@@ -48,14 +48,14 @@ export default async function POST(req: NextRequest) {
       title,
       category,
       purchaseDate: new Date(purchaseDate),
-      warrentyExpiry: new Date(warrantyExpiry),
+      warrantyExpiry: new Date(warrantyExpiry),
       price,
       receipts: receipts || [],
       notes,
     });
     // sending response if the item is created
     return NextResponse.json(
-      { message: 'Item saved successfully', items: item },
+      { message: 'Item saved successfully', item: item },
       { status: 201 }
     );
   } catch (error) {
