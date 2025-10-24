@@ -10,11 +10,17 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Register() {
+  const [userName, setUserName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setUserName(e.target.value);
+  };
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -35,12 +41,24 @@ export default function Register() {
       setLoading(false);
       setError('');
       const response = await axios.post('/register', {
+        userName,
         email,
         password,
       });
     } catch (error: unknown) {
-      console.log(error);
-      setError('Request failed');
+      if (axios.isAxiosError(error)) {
+        if (error.message) {
+          setError(error.response?.data?.message || 'Registation failed');
+        } else if (error.request) {
+          setError('No server response. Check your connection.');
+        } else {
+          setError(error.message);
+        }
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Request failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -68,6 +86,24 @@ export default function Register() {
             </h2>
             <form onSubmit={handleSubmit}>
               <FieldGroup>
+                {error && (
+                  <p className="text-red-600 text-sm text-center">{error}</p>
+                )}
+                <Field>
+                  <FieldLabel
+                    htmlFor="fullname"
+                    className="text-slate-100"
+                  >
+                    Email
+                  </FieldLabel>
+                  <Input
+                    id="fullanme"
+                    type="text"
+                    onChange={handleUserName}
+                    placeholder="Enter your full name"
+                    className="bg-slate-900/50 border border-slate-800 text-slate-400"
+                  />
+                </Field>
                 <Field>
                   <FieldLabel
                     htmlFor="Email"
@@ -115,7 +151,7 @@ export default function Register() {
                     disabled={loading}
                     type="submit"
                   >
-                    Login
+                    {loading ? 'Registering....' : 'Register'}
                   </Button>
                 </Field>
                 <Field>
