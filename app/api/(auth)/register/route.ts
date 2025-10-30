@@ -4,7 +4,7 @@ import { registerSchema } from '@/types/registerSchema';
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 
-export default async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   await Db();
   try {
     const body = await req.json();
@@ -12,11 +12,18 @@ export default async function POST(req: NextRequest) {
     //Validating Data
     const result = registerSchema.safeParse(body);
     if (!result.success) {
+      const errors: Record<string, string> = {};
+      result.error.issues.forEach((err) => {
+        if (err.path.length > 0) {
+          errors[String(err.path[0])] = err.message;
+        }
+      });
       return NextResponse.json(
-        { message: 'Invalid input', errors: result.error },
+        { message: 'Invalid input', errors: errors },
         { status: 400 }
       );
     }
+
     const { email, name, password } = result.data;
 
     //Checking existing user
