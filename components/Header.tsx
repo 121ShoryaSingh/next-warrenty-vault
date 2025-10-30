@@ -5,7 +5,7 @@ import Section from './Section';
 import { Button } from './ui/button';
 import { LogOutIcon, Menu } from 'lucide-react';
 import MobileNav from './MobileMenu';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
@@ -17,6 +17,10 @@ export default function Header() {
     router.refresh();
 
     router.push('/login');
+  };
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/login' });
   };
 
   const handleMobileMenu = () => {
@@ -36,7 +40,10 @@ export default function Header() {
                   <Button className="border border-blue-600 text-blue-600 bg-transparent hover:bg-blue-600 hover:text-white duration-300 cursor-pointer ease-in-out">
                     Account
                   </Button>
-                  <Button className=" cursor-pointer bg-blue-600 hover:bg-blue-500 duration-300 ease-in-out">
+                  <Button
+                    className=" cursor-pointer bg-blue-600 hover:bg-blue-500 duration-300 ease-in-out"
+                    onClick={handleLogout}
+                  >
                     <LogOutIcon />
                   </Button>
                 </>
