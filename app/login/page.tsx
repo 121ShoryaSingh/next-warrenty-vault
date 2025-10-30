@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Login() {
@@ -16,13 +17,13 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const router = useRouter();
+
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     setEmail(e.target.value);
   };
 
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     setPassword(e.target.value);
   };
 
@@ -30,7 +31,8 @@ export default function Login() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       setIsLoading(true);
       setError('');
@@ -39,9 +41,20 @@ export default function Login() {
         password,
         redirect: false,
       });
-    } catch (error: unknown) {
-      console.log(error);
-      setError('Request failed');
+      if (!response?.ok) {
+        if (response.error === 'CredentialsSignin') {
+          setError('Invalid email or password');
+        } else if (response.error) {
+          setError(response.error);
+        } else {
+          setError('Authentication failed. Please try again.');
+        }
+      } else {
+        router.refresh();
+        router.push('/dashboard');
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -68,6 +81,7 @@ export default function Login() {
               Login
             </h2>
             <form onSubmit={handleSubmit}>
+              {/* Email */}
               <FieldGroup>
                 <Field>
                   <FieldLabel
@@ -84,6 +98,7 @@ export default function Login() {
                     className="bg-slate-900/50 border border-slate-800 text-slate-400"
                   />
                 </Field>
+                {/* Password */}
                 <Field>
                   <FieldLabel
                     htmlFor="Password"
@@ -105,15 +120,26 @@ export default function Login() {
                         showPassword ? 'text-blue-400' : 'text-slate-400'
                       }`}
                       onClick={handleShowPassword}
+                      type="button"
                     >
                       <Eye />
                     </Button>
                   </div>
+                  <div className="flex justify-end">
+                    <Link
+                      href="/emailCheck"
+                      className="text-slate-400 hover:underline underline-offset-2 hover:text-blue-400 duration-300 ease-in"
+                    >
+                      forgot password?
+                    </Link>
+                  </div>
                 </Field>
+                {/* Submit button */}
                 <Field>
                   <Button
                     className="bg-blue-600 cursor-pointer hover:bg-blue-800 duration-300 ease-in"
                     type="submit"
+                    disabled={isLoading}
                   >
                     Login
                   </Button>
