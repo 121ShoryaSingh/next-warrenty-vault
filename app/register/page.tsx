@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { ArrowLeft, Eye } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Register() {
@@ -16,19 +17,21 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const router = useRouter();
 
   const handleUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     setUserName(e.target.value);
   };
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     setEmail(e.target.value);
   };
 
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     setPassword(e.target.value);
   };
 
@@ -36,19 +39,41 @@ export default function Register() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      setLoading(false);
+      setLoading(true);
       setError('');
-      const response = await axios.post('/register', {
-        userName,
-        email,
-        password,
+      setNameError('');
+      setEmailError('');
+      setPasswordError('');
+
+      const response = await axios.post('/api/register', {
+        name: userName,
+        email: email,
+        password: password,
       });
+      if (response.data?.message === 'User registered successfully!') {
+        router.refresh();
+        router.push('/login');
+      }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        if (error.message) {
-          setError(error.response?.data?.message || 'Registation failed');
+        if (error.response) {
+          const errorData = error.response.data;
+          if (errorData.message === 'Invalid input') {
+            if (errorData.errors.password) {
+              setPasswordError(errorData.errors.password);
+            }
+            if (errorData.errors.email) {
+              setEmailError(errorData.errors.email);
+            }
+            if (errorData.errors.name) {
+              setNameError(errorData.errors.name);
+            }
+          } else {
+            setError(error.response.data.message || 'Registation failed');
+          }
         } else if (error.request) {
           setError('No server response. Check your connection.');
         } else {
@@ -84,17 +109,21 @@ export default function Register() {
             <h2 className="text-slate-100 text-2xl font-medium text-center">
               Register
             </h2>
+            <div className="flex justify-center items-center ">
+              {error && (
+                <div className="w-full text-center text-sm text-red-400 border border-red-600 bg-red-800/70 py-2 rounded-xl">
+                  <p>{error}</p>
+                </div>
+              )}
+            </div>
             <form onSubmit={handleSubmit}>
               <FieldGroup>
-                {error && (
-                  <p className="text-red-600 text-sm text-center">{error}</p>
-                )}
                 <Field>
                   <FieldLabel
                     htmlFor="fullname"
                     className="text-slate-100"
                   >
-                    Email
+                    Full Name
                   </FieldLabel>
                   <Input
                     id="fullanme"
@@ -111,6 +140,9 @@ export default function Register() {
                   >
                     Email
                   </FieldLabel>
+                  {emailError && (
+                    <p className="text-sm text-red-400">{emailError}</p>
+                  )}
                   <Input
                     id="Email"
                     type="email"
@@ -126,6 +158,9 @@ export default function Register() {
                   >
                     Password
                   </FieldLabel>
+                  {passwordError && (
+                    <p className="text-sm text-red-400">{passwordError}</p>
+                  )}
                   <div className="relative">
                     <Input
                       id="Password"
@@ -139,6 +174,7 @@ export default function Register() {
                       className={`absolute right-0 cursor-pointer hover:text-blue-500 hover:bg-transparent ${
                         showPassword ? 'text-blue-400' : 'text-slate-400'
                       }`}
+                      type="button"
                       onClick={handleShowPassword}
                     >
                       <Eye />
