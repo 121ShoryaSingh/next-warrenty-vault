@@ -3,9 +3,6 @@ import mongoose, { Connection } from 'mongoose';
 let cachedConnection: Connection | null = null;
 
 const connectionString = process.env.MONGODB_URI!;
-if (!connectionString) {
-  throw new Error('connection string is not defined in .env');
-}
 
 export async function Db() {
   if (cachedConnection) {
