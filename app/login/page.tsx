@@ -92,6 +92,7 @@ export default function Login() {
                   </FieldLabel>
                   <Input
                     id="Email"
+                    required
                     type="email"
                     onChange={handleEmail}
                     placeholder="Enter your email"
@@ -109,6 +110,7 @@ export default function Login() {
                   <div className="relative">
                     <Input
                       id="Password"
+                      required
                       onChange={handlePassword}
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"

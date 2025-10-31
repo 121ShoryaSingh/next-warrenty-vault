@@ -127,6 +127,7 @@ export default function Register() {
                   </FieldLabel>
                   <Input
                     id="fullanme"
+                    required
                     type="text"
                     onChange={handleUserName}
                     placeholder="Enter your full name"
@@ -145,6 +146,7 @@ export default function Register() {
                   )}
                   <Input
                     id="Email"
+                    required
                     type="email"
                     onChange={handleEmail}
                     placeholder="Enter your email"
@@ -164,6 +166,7 @@ export default function Register() {
                   <div className="relative">
                     <Input
                       id="Password"
+                      required
                       onChange={handlePassword}
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
