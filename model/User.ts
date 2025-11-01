@@ -5,6 +5,8 @@ export interface IUser extends Document {
   email: string;
   name?: string;
   password?: string;
+  passwordResetToken?: string;
+  passwordResetDate?: Date;
 }
 
 export const UserSchema: Schema<IUser> = new Schema(
@@ -25,6 +27,12 @@ export const UserSchema: Schema<IUser> = new Schema(
       required: function (this: IUser) {
         return true;
       },
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetDate: {
+      type: Date,
     },
   },
   {
