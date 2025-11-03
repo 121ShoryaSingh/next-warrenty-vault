@@ -83,6 +83,13 @@ export default function Login() {
             <form onSubmit={handleSubmit}>
               {/* Email */}
               <FieldGroup>
+                <div className="flex justify-center items-center ">
+                  {error && (
+                    <div className="w-full text-center text-sm text-red-400 border border-red-600 bg-red-800/70 py-2 rounded-xl">
+                      <p>{error}</p>
+                    </div>
+                  )}
+                </div>
                 <Field>
                   <FieldLabel
                     htmlFor="Email"
