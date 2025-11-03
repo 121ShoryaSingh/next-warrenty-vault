@@ -21,7 +21,7 @@ export default function EmailCheck() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isVerified, setIsVerified] = useState(true);
+  const [isVerified, setIsVerified] = useState(false);
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -32,9 +32,10 @@ export default function EmailCheck() {
     try {
       setLoading(true);
       setError('');
+      setIsVerified(false);
       const response = await axios.post('/api/ResetPassword', { email });
 
-      if (response.data.message === 'Password reset email sent') {
+      if (response.status === 200) {
         setIsVerified(true);
       }
     } catch (error: unknown) {
@@ -83,9 +84,9 @@ export default function EmailCheck() {
             <FieldGroup className="max-w-md mx-auto">
               <FieldSet>
                 <div className="text-slate-100 text-2xl font-medium text-center">
-                  <FieldLegend>Forgetten Password</FieldLegend>
+                  <FieldLegend>Forgot Your Password?</FieldLegend>
                   <FieldDescription>
-                    Enter the registered email
+                    Enter your registered email.
                   </FieldDescription>
                 </div>
                 <FieldGroup>
@@ -120,10 +121,9 @@ export default function EmailCheck() {
               >
                 Submit
               </Button>
-              <div>{error && <p>{error}</p>}</div>
-              <div>
+              <div className="flex justify-center items-center">
                 {isVerified && (
-                  <p>
+                  <p className="border border-blue-600 bg-blue-600/40 text-blue-200 text-center text-sm w-full rounded-xl py-2">
                     Email has been sent with instructions to reset their
                     password.
                   </p>
