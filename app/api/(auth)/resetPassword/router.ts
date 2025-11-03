@@ -6,16 +6,20 @@ import nodemailer from 'nodemailer';
 
 export async function POST(req: NextRequest) {
   try {
+    // retreving email from req
     const { email } = await req.json();
 
+    // awating database connection
     await Db();
 
+    // Verifying if the user
     const user = await User.findOne({ email });
 
     if (!user) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
+    // Creating unique token
     const resetToken = crypto.randomBytes(20).toString('hex');
     const passwordResetToken = crypto
       .createHash('sha256')
@@ -23,12 +27,15 @@ export async function POST(req: NextRequest) {
       .digest('hex');
     const passwordResetExpiryAt = Date.now() + 10 * 60 * 1000;
 
+    // Saving the token
     user.passwordResetToken = passwordResetToken;
     user.passwordResetDate = new Date(passwordResetExpiryAt);
     await user.save();
 
+    // creating a unqiue url
     const resetUrl = `${process.env.NEXT_PUBLIC_URL}/resetPassword/${resetToken}`;
 
+    // sending the unqiue url to verified email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT || '587'),
