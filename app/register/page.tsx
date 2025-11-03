@@ -125,6 +125,9 @@ export default function Register() {
                   >
                     Full Name
                   </FieldLabel>
+                  {nameError && (
+                    <p className="text-sm text-red-400">{nameError}</p>
+                  )}
                   <Input
                     id="fullanme"
                     required
