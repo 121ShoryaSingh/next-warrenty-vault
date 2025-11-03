@@ -11,9 +11,8 @@ import {
   FieldSet,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
 import { ArrowLeft } from 'lucide-react';
-import { set } from 'mongoose';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -32,7 +31,8 @@ export default function EmailCheck() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post('/resetPassword', { email: email });
+      setError('');
+      const response = await axios.post('/api/ResetPassword', { email });
 
       if (response.data.message === 'Password reset email sent') {
         setIsVerified(true);
@@ -41,22 +41,17 @@ export default function EmailCheck() {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           const errorData = error.response.data;
+          setError(errorData.message);
+        } else if (error.request) {
+          setError('No server response. Check your connection.');
         } else {
-          setError('Something went wrong, please try again');
+          setError(error.message);
         }
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Request failed');
       }
-
-      //   else {
-      //         setError(error.response.data.message || 'Registation failed');
-      //       }
-      // }
-      //   } else if (error.request) {
-      //     setError('No server response. Check your connection.');
-      //   }
-      //   }
-      //   else {
-      //     setError(error.message);
-      //   }
     } finally {
       setLoading(false);
     }
@@ -94,6 +89,13 @@ export default function EmailCheck() {
                   </FieldDescription>
                 </div>
                 <FieldGroup>
+                  <div className="flex justify-center items-center">
+                    {error && (
+                      <p className="w-full text-center text-sm text-red-400 border border-red-600 bg-red-800/70 py-2 rounded-xl">
+                        {error}
+                      </p>
+                    )}
+                  </div>
                   <Field>
                     <FieldLabel
                       htmlFor="email"
