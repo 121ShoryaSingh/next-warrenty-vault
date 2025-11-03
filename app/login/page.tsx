@@ -139,7 +139,7 @@ export default function Login() {
                       href="/emailCheck"
                       className="text-slate-400 hover:underline underline-offset-2 hover:text-blue-400 duration-300 ease-in"
                     >
-                      forgot password?
+                      forgot your password?
                     </Link>
                   </div>
                 </Field>
