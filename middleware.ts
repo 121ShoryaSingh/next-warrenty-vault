@@ -1,5 +1,5 @@
 export { auth as middleware } from '@/app/api/(auth)/[...nextauth]/auth';
 
 export const config = {
-  matcher: ['/((?!api/ResetPassword).*)'],
+  matcher: ['/((?!api/ResetPassword).*)', '/((?!api/UpdateResetPassword).*)'],
 };
