@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Eye } from 'lucide-react';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Login() {
   const [email, setEmail] = useState<string>('');
@@ -18,6 +19,11 @@ export default function Login() {
   const [error, setError] = useState('');
 
   const router = useRouter();
+  const session = useSession();
+
+  if (session.status === 'authenticated') {
+    router.push('/dashboard');
+  }
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -41,11 +47,13 @@ export default function Login() {
         password,
         redirect: false,
       });
-      if (!response?.ok) {
+      if (response.error) {
         if (response.error === 'CredentialsSignin') {
           setError('Invalid email or password');
+          toast.error('Invalid email or password');
         } else if (response.error) {
           setError(response.error);
+          toast.error(response.error);
         } else {
           setError('Authentication failed. Please try again.');
         }
@@ -53,8 +61,9 @@ export default function Login() {
         router.refresh();
         router.push('/dashboard');
       }
-    } catch {
+    } catch (error: unknown) {
       setError('Something went wrong. Please try again.');
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +76,9 @@ export default function Login() {
           <Button
             className="w-fit flex text-slate-100 border border-slate-800 md:hidden duration-300 ease-in"
             variant="ghost"
+            onClick={() => {
+              router.push('/');
+            }}
           >
             <ArrowLeft />
             Back
