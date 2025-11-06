@@ -1,10 +1,13 @@
+'use client';
 import { signOut, useSession } from 'next-auth/react';
 import Section from './Section';
 import { Button } from './ui/button';
 import { LogOutIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function MobileNav() {
   const session = useSession();
+  const router = useRouter();
 
   const handleLogOut = () => {
     signOut({ callbackUrl: '/login' });
@@ -31,10 +34,23 @@ export default function MobileNav() {
               <Button
                 className="hover:bg-slate-700 bg-slate-900 hover:text-slate-100 ease-in-out duration-300 w-full"
                 variant="ghost"
+                onClick={() => {
+                  router.refresh();
+                  router.push('/login');
+                }}
               >
                 Login
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-400 ease-in-out duration-300 w-full">
+              <Button
+                className="bg-blue-600 hover:bg-blue-400 ease-in-out duration-300 w-full"
+                onClick={() => {
+                  if (session.status !== 'unauthenticated') {
+                    router.push('/dashboard');
+                  } else {
+                    router.push('/login');
+                  }
+                }}
+              >
                 Get Started
               </Button>
             </>
