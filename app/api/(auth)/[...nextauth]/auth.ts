@@ -7,6 +7,10 @@ import GoogleProvider from 'next-auth/providers/google';
 import { NextRequest } from 'next/server';
 
 export const authOptions = {
+  pages: {
+    signIn: '/login',
+    error: '/login',
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
