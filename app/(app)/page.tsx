@@ -1,3 +1,4 @@
+'use client';
 import Section from '@/components/Section';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,26 +10,29 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Bell, File, Lock } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
+const data = [
+  {
+    title: 'Secure Storage',
+    desc: 'Your warranties are encrypted and stored securely with bank-level security',
+    icon: Lock,
+  },
+  {
+    title: 'Expiry Alerts',
+    desc: 'Get notified before your warranties expire so you never miss a claim',
+    icon: Bell,
+  },
+  {
+    title: 'Receipt Scanning',
+    desc: 'Upload photos or PDFs of your receipts and access them anytime',
+    icon: File,
+  },
+];
 export default function Home() {
-  const data = [
-    {
-      title: 'Secure Storage',
-      desc: 'Your warranties are encrypted and stored securely with bank-level security',
-      icon: Lock,
-    },
-    {
-      title: 'Expiry Alerts',
-      desc: 'Get notified before your warranties expire so you never miss a claim',
-      icon: Bell,
-    },
-    {
-      title: 'Receipt Scanning',
-      desc: 'Upload photos or PDFs of your receipts and access them anytime',
-      icon: File,
-    },
-  ];
-
+  const session = useSession();
+  const router = useRouter();
   return (
     <div className="pt-32 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="min-h-screen">
@@ -42,8 +46,17 @@ export default function Home() {
               Get notified beforee they expire.
             </p>
             <div>
-              <Button className="bg-blue-600 hover:bg-blue-500 duration-300 ease-in">
-                Start Free Trial
+              <Button
+                className="bg-blue-600 hover:bg-blue-500 duration-300 ease-in"
+                onClick={() => {
+                  if (session.status !== 'unauthenticated') {
+                    router.push('/dashboard');
+                  } else {
+                    router.push('/login');
+                  }
+                }}
+              >
+                Start manging warrenties
               </Button>
             </div>
           </div>
