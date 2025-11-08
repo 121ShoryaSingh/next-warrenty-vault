@@ -8,7 +8,7 @@ import { ArrowLeft, Eye } from 'lucide-react';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Login() {
@@ -21,9 +21,9 @@ export default function Login() {
   const router = useRouter();
   const session = useSession();
 
-  if (session.status === 'authenticated') {
+  useEffect(() => {
     router.push('/dashboard');
-  }
+  }, [session.status, router]);
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
