@@ -11,7 +11,7 @@ export default function Dashboard() {
           <div className="py-5 flex flex-col md:flex-row justify-between items-center mx-auto">
             <div className="space-y-2">
               <h2 className="text-slate-200 text-2xl font-bold">
-                Your Warrenties
+                Your Warranties
               </h2>
               <p className="text-slate-400 ">
                 Manage and track all your warranty items in one place
@@ -24,7 +24,7 @@ export default function Dashboard() {
                 size="lg"
               >
                 <Plus />
-                Add Warrenty Item
+                Add Warranty Item
               </LinkButton>
             </div>
           </div>
