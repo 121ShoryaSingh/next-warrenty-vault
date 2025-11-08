@@ -56,7 +56,7 @@ export default function Home() {
                   }
                 }}
               >
-                Start manging warrenties
+                Start manging warranties
               </Button>
             </div>
           </div>
