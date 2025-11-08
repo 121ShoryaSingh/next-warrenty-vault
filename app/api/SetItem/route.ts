@@ -5,7 +5,7 @@ import User from '@/model/User';
 import { itemSchema } from '@/types/itemSchema';
 import Item from '@/model/Item';
 
-export default async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     //Checking user session
     const session = await auth();
@@ -21,9 +21,12 @@ export default async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'User not found' }, { status: 401 });
     }
     const body = await req.json();
+    console.log(body);
     // checking item data according to db
     const result = itemSchema.safeParse(body);
     if (!result.success) {
+      console.log(result.data);
+      console.error(result.error);
       return NextResponse.json(
         {
           message: 'Invalid input',
@@ -35,22 +38,26 @@ export default async function POST(req: NextRequest) {
     const {
       title,
       category,
-      purchaseDate,
-      warrantyExpiry,
+      purchase_date,
+      warranty_expiry_date,
       price,
-      receipts,
+      receipt_files,
       notes,
     } = result.data;
+
+    const receiptKeys = receipt_files.map((file) => file.key);
+    const receiptsForDb = receiptKeys.map((key) => ({ key }));
+    console.log(receiptKeys);
 
     // creating item in db
     const item = await Item.create({
       owner: user._id,
       title,
       category,
-      purchaseDate: new Date(purchaseDate),
-      warrantyExpiry: new Date(warrantyExpiry),
+      purchaseDate: new Date(purchase_date),
+      warrantyExpiry: new Date(warranty_expiry_date),
       price,
-      receipts: receipts || [],
+      recepts: receiptsForDb,
       notes,
     });
     // sending response if the item is created
