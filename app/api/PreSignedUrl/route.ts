@@ -15,7 +15,7 @@ const r2 = new S3Client({
   },
 });
 
-export default async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const { fileName, fileType, operation, key } = await req.json();
 
@@ -31,11 +31,14 @@ export default async function POST(req: NextRequest) {
 
       const signedUrl = await getSignedUrl(r2, command, { expiresIn: 300 });
 
-      return NextResponse.json({
-        message: 'Recept uploaded successfully',
-        signedUrl,
-        key,
-      });
+      return NextResponse.json(
+        {
+          message: 'Recept uploaded successfully',
+          signedUrl,
+          key,
+        },
+        { status: 200 }
+      );
 
       // for generating pre signed url for download.
     } else if (operation === 'download') {
@@ -54,10 +57,13 @@ export default async function POST(req: NextRequest) {
       const signedUrl = await getSignedUrl(r2, downloadCommand, {
         expiresIn: 3000,
       });
-      return NextResponse.json({
-        signedUrl,
-        operation: 'download',
-      });
+      return NextResponse.json(
+        {
+          signedUrl,
+          operation: 'download',
+        },
+        { status: 200 }
+      );
     }
   } catch (error) {
     console.error('Presigned URL generation error: ', error);
