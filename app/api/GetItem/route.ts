@@ -3,7 +3,7 @@ import { auth } from '../(auth)/[...nextauth]/auth';
 import User from '@/model/User';
 import Item from '@/model/Item';
 
-export default async function GET() {
+export async function GET() {
   try {
     const session = await auth();
     const email = session?.user?.email;
