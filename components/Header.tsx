@@ -37,8 +37,13 @@ export default function Header() {
             <div className="hidden md:flex items-center text-slate-100 gap-4">
               {session.status === 'authenticated' ? (
                 <>
-                  <Button className="border border-blue-600 text-blue-600 bg-transparent hover:bg-blue-600 hover:text-white duration-300 cursor-pointer ease-in-out">
-                    Account
+                  <Button
+                    className="border border-blue-600 text-blue-600 bg-transparent hover:bg-blue-600 hover:text-white duration-300 cursor-pointer ease-in-out"
+                    onClick={() => {
+                      router.push('/dashboard');
+                    }}
+                  >
+                    Dashboard
                   </Button>
                   <Button
                     className=" cursor-pointer bg-blue-600 hover:bg-blue-500 duration-300 ease-in-out"
