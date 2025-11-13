@@ -59,7 +59,7 @@ export default function WarrantyCard({
         return (
           <Badge
             variant="outline"
-            className=" border-green-500 text-gray-600 font-semibold"
+            className=" border-green-500 text-green-600 font-semibold"
           >
             Active
           </Badge>
@@ -71,33 +71,44 @@ export default function WarrantyCard({
       <Card className="hover:shadow-lg hover:shadow-blue-900/20 transition-all duration-200 bg-slate-900 border-slate-800">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle>{item.title}</CardTitle>
-            <p className="text-sm text-slate-400 mt-1">
-              {getCategoryLabel(item.category)}
-            </p>
+            <div>
+              <CardTitle className="text-slate-100">{item.title}</CardTitle>
+              <p className="text-sm text-slate-400 mt-1">
+                {getCategoryLabel(item.category)}
+              </p>
+            </div>
+            {getStatusBadge()}
           </div>
-          {getStatusBadge()}
         </CardHeader>
         <CardContent className="space-y-3 pb-3">
-          <div>
-            <Calendar className="h-4 w-4 text-slate-400" />
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <p>Purchase Date</p>
-              <p>{formatDate(item.purchaseDate)}</p>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <div className="text-slate-400">
+                <p>Purchase Date</p>
+                <p>{formatDate(item.purchaseDate)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <div className="text-slate-400">
+                <p>Warranty Expires</p>
+                <p>{formatDate(item.warrantyExpiry)}</p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
             <IndianRupee className="h-4 w-4 text-slate-400" />
             <div>
               <p className="text-xs text-slate-500">Price</p>
-              <p className="font-semibold text-base text-slate-200">
+              <p className="flex items-center font-semibold text-base text-slate-200">
                 {item.price}
               </p>
             </div>
           </div>
           {item.recepts.length > 0 && (
-            <div>
-              <FileText />
+            <div className="flex items-center gap-2 text-sm text-slate-400 pt-2 border-t border-slate-800">
+              <FileText className="h-4 w-4" />
               <span>{item.recepts.length} receipt file(s) attached</span>
             </div>
           )}
@@ -106,7 +117,7 @@ export default function WarrantyCard({
           <Button
             variant="outline"
             onClick={() => onView(item)}
-            className="flex-1 border-slate-700 hover:bg-slate-800"
+            className="flex-1 bg-transparent border-slate-700 hover:bg-slate-800 text-slate-100 hover:text-slate-100"
           >
             <Eye className="h-4 w-4 mr-2" />
             View Details
@@ -116,14 +127,16 @@ export default function WarrantyCard({
               <Button
                 variant="outline"
                 size="icon"
-                className="text-red-400 hover:text-red-300 border-slate-700 hover:bg-slate-800"
+                className="text-red-400 hover:text-red-300 border-slate-700 hover:bg-slate-800 bg-transparent"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-slate-900">
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete Warranty Item</AlertDialogTitle>
+                <AlertDialogTitle className="text-slate-100">
+                  Delete Warranty Item
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   Are you sure you want to delete &ldquo;{item.title}&rdquo;?
                   This action cannot be undone.
