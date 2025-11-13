@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { auth } from '../(auth)/[...nextauth]/auth';
 import User from '@/model/User';
 import Item from '@/model/Item';
+import { Db } from '@/lib/Db';
 
 export async function GET() {
   try {
+    await Db();
     const session = await auth();
     const email = session?.user?.email;
     if (!email) {
