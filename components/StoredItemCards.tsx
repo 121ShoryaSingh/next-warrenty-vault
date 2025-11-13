@@ -12,7 +12,24 @@ export default function StoredItemCards() {
   const [warranties, setWarranties] = useState<WarrantyItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<WarrantyItem | null>(null);
   const [error, setError] = useState('');
+
+  const handleDelete = async (id: string) => {
+    try {
+      toast('Warranty item deleted successfully');
+
+      setWarranties(warranties.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting warranty item:', error);
+      toast.error('Failed to delete warranty item');
+    }
+  };
+
+  const handleView = (item: WarrantyItem) => {
+    setSelectedItem(item);
+    setIsDetailsOpen(true);
+  };
 
   useEffect(() => {
     try {
@@ -20,8 +37,9 @@ export default function StoredItemCards() {
       setError('');
       const fetchData = async () => {
         const response = await axios.get('/api/GetItem');
+        const data = await response.data.items;
         console.log(response.data);
-        setWarranties(response.data);
+        setWarranties(data);
       };
       fetchData();
     } catch (error: unknown) {
@@ -44,8 +62,21 @@ export default function StoredItemCards() {
     }
   }, []);
 
-  const activeWarranties = 0;
-  const expriedWarranties = 0;
+  const activeWarranties = warranties.filter(
+    (w) => new Date(w.warrantyExpiry) >= new Date()
+  );
+  const expiredWarranties = warranties.filter(
+    (w) => new Date(w.warrantyExpiry) < new Date()
+  );
+
+  if (warranties.length === 0) {
+    return (
+      <div className="text-center bg-blue-950/50 py-6 rounded-lg">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Tabs defaultValue="all">
@@ -60,13 +91,13 @@ export default function StoredItemCards() {
             value="active"
             className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
           >
-            Active ({activeWarranties})
+            Active ({activeWarranties.length})
           </TabsTrigger>
           <TabsTrigger
             value="expired"
             className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
           >
-            Expired ({expriedWarranties})
+            Expired ({expiredWarranties.length})
           </TabsTrigger>
         </TabsList>
         <TabsContent
@@ -77,7 +108,11 @@ export default function StoredItemCards() {
             {warranties.map((item, index) => {
               return (
                 <div key={index}>
-                  <WarrantyCard item={item} />
+                  <WarrantyCard
+                    item={item}
+                    onDelete={handleDelete}
+                    onView={handleView}
+                  />
                 </div>
               );
             })}
