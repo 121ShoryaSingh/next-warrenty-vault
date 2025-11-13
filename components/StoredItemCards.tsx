@@ -45,7 +45,7 @@ export default function StoredItemCards() {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          setError(error.message);
+          setError(error.response.data.message);
           toast(error.message);
         } else if (error.request) {
           setError('No server response. Check your connection.');
@@ -71,7 +71,7 @@ export default function StoredItemCards() {
 
   if (warranties.length === 0) {
     return (
-      <div className="text-center bg-blue-950/50 py-6 rounded-lg">
+      <div className="text-center bg-blue-950/50 py-6 rounded-lg text-slate-100">
         <p>{error}</p>
       </div>
     );
@@ -104,25 +104,74 @@ export default function StoredItemCards() {
           value="all"
           className="mt-6"
         >
-          <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
-            {warranties.map((item, index) => {
-              return (
-                <div key={index}>
-                  <WarrantyCard
-                    item={item}
-                    onDelete={handleDelete}
-                    onView={handleView}
-                  />
-                </div>
-              );
-            })}
-          </div>
+          {warranties.length > 0 ? (
+            <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
+              {warranties.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <WarrantyCard
+                      item={item}
+                      key={index}
+                      onDelete={handleDelete}
+                      onView={handleView}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-slate-100 text-center bg-blue-950/50 py-6">
+              There are no warranties.
+            </p>
+          )}
         </TabsContent>
-        <TabsContent value="active">
-          <div></div>
+        <TabsContent
+          value="active"
+          className="mt-6"
+        >
+          {activeWarranties.length > 0 ? (
+            <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
+              {activeWarranties.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <WarrantyCard
+                      item={item}
+                      onDelete={handleDelete}
+                      onView={handleView}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-slate-100 text-center bg-blue-950/50 py-6">
+              There are no active warranties.
+            </p>
+          )}
         </TabsContent>
-        <TabsContent value="expired">
-          <div></div>
+        <TabsContent
+          value="expired"
+          className="mt-6"
+        >
+          {expiredWarranties.length > 0 ? (
+            <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
+              {expiredWarranties.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <WarrantyCard
+                      item={item}
+                      onDelete={handleDelete}
+                      onView={handleView}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-slate-100 text-center bg-blue-950/50 py-6">
+              There are no expired warranties.
+            </p>
+          )}
         </TabsContent>
       </Tabs>
     </div>
