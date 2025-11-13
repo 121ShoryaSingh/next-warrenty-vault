@@ -1,4 +1,4 @@
-export type ReceiptFile = 
+export type ReceiptFile =
   | {
       success: true;
       key: string;
@@ -21,14 +21,14 @@ export type WarrantyCategory =
 
 export interface WarrantyItem {
   id: string;
-  user_id: string;
+  owner: string;
   title: string;
   category: WarrantyCategory;
-  purchase_date: string;
-  warranty_expiry_date: string;
+  purchaseDate: string;
+  warrantyExpiry: string;
   price: number;
   notes: string;
-  receipt_files: ReceiptFile[];
+  recepts: ReceiptFile[];
   created_at: string;
   updated_at: string;
 }
