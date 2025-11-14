@@ -2,13 +2,12 @@
 import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { WarrantyItem } from '@/lib/types';
-import { useRouter } from 'next/navigation';
 import WarrantyCard from './WarrantyCard';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { Spinner } from './ui/spinner';
 
 export default function StoredItemCards() {
-  const router = useRouter();
   const [warranties, setWarranties] = useState<WarrantyItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -17,9 +16,11 @@ export default function StoredItemCards() {
 
   const handleDelete = async (id: string) => {
     try {
-      toast('Warranty item deleted successfully');
-
-      setWarranties(warranties.filter((item) => item.id !== id));
+      const response = await axios.delete(`/api/delete/${id}`);
+      if (response.status === 200) {
+        toast('Warranty item deleted successfully');
+        setWarranties(warranties.filter((item) => item.id !== id));
+      }
     } catch (error) {
       console.error('Error deleting warranty item:', error);
       toast.error('Failed to delete warranty item');
@@ -79,101 +80,109 @@ export default function StoredItemCards() {
 
   return (
     <div>
-      <Tabs defaultValue="all">
-        <TabsList className="grid w-full grid-cols-3 bg-blue-950/50 ">
-          <TabsTrigger
-            value="all"
-            className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
-          >
-            All ({warranties.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="active"
-            className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
-          >
-            Active ({activeWarranties.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="expired"
-            className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
-          >
-            Expired ({expiredWarranties.length})
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent
-          value="all"
-          className="mt-6"
-        >
-          {warranties.length > 0 ? (
-            <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
-              {warranties.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <WarrantyCard
-                      item={item}
-                      key={index}
-                      onDelete={handleDelete}
-                      onView={handleView}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-slate-100 text-center bg-blue-950/50 py-6">
-              There are no warranties.
-            </p>
-          )}
-        </TabsContent>
-        <TabsContent
-          value="active"
-          className="mt-6"
-        >
-          {activeWarranties.length > 0 ? (
-            <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
-              {activeWarranties.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <WarrantyCard
-                      item={item}
-                      onDelete={handleDelete}
-                      onView={handleView}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-slate-100 text-center bg-blue-950/50 py-6">
-              There are no active warranties.
-            </p>
-          )}
-        </TabsContent>
-        <TabsContent
-          value="expired"
-          className="mt-6"
-        >
-          {expiredWarranties.length > 0 ? (
-            <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
-              {expiredWarranties.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <WarrantyCard
-                      item={item}
-                      onDelete={handleDelete}
-                      onView={handleView}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-slate-100 text-center bg-blue-950/50 py-6">
-              There are no expired warranties.
-            </p>
-          )}
-        </TabsContent>
-      </Tabs>
+      {loading === false ? (
+        <>
+          <Tabs defaultValue="all">
+            <TabsList className="grid w-full grid-cols-3 bg-blue-950/50 ">
+              <TabsTrigger
+                value="all"
+                className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
+              >
+                All ({warranties.length})
+              </TabsTrigger>
+              <TabsTrigger
+                value="active"
+                className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
+              >
+                Active ({activeWarranties.length})
+              </TabsTrigger>
+              <TabsTrigger
+                value="expired"
+                className="data-[state=active]:bg-blue-900/50 data-[state=active]:text-white text-slate-400"
+              >
+                Expired ({expiredWarranties.length})
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent
+              value="all"
+              className="mt-6"
+            >
+              {warranties.length > 0 ? (
+                <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
+                  {warranties.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <WarrantyCard
+                          item={item}
+                          key={index}
+                          onDelete={handleDelete}
+                          onView={handleView}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-slate-100 text-center bg-blue-950/50 py-6">
+                  There are no warranties.
+                </p>
+              )}
+            </TabsContent>
+            <TabsContent
+              value="active"
+              className="mt-6"
+            >
+              {activeWarranties.length > 0 ? (
+                <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
+                  {activeWarranties.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <WarrantyCard
+                          item={item}
+                          onDelete={handleDelete}
+                          onView={handleView}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-slate-100 text-center bg-blue-950/50 py-6">
+                  There are no active warranties.
+                </p>
+              )}
+            </TabsContent>
+            <TabsContent
+              value="expired"
+              className="mt-6"
+            >
+              {expiredWarranties.length > 0 ? (
+                <div className="w-full bg-blue-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6 rounded-md">
+                  {expiredWarranties.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <WarrantyCard
+                          item={item}
+                          onDelete={handleDelete}
+                          onView={handleView}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-slate-100 text-center bg-blue-950/50 py-6">
+                  There are no expired warranties.
+                </p>
+              )}
+            </TabsContent>
+          </Tabs>
+        </>
+      ) : (
+        <div className="w-full bg-blue-950/50 flex gap-6 px-4 py-6 rounded-md">
+          <Spinner className="text-slate-100 mx-auto" />
+        </div>
+      )}
     </div>
   );
 }
