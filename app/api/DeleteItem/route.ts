@@ -2,12 +2,11 @@ import { Db } from '@/lib/Db';
 import Item from '@/model/Item';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest) {
   try {
-    const { id } = context.params;
+    const body = await req.json();
+
+    const id = body.id;
 
     if (!id) {
       return NextResponse.json(

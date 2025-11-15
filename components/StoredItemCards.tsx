@@ -17,7 +17,7 @@ export default function StoredItemCards() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete(`/api/DeleteItem/${id}`);
+      const response = await axios.delete(`/api/DeleteItem`, { data: { id } });
       if (response.status === 200) {
         toast('Warranty item deleted successfully');
         setWarranties(warranties.filter((item) => item._id !== id));
