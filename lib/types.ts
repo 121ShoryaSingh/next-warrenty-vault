@@ -20,7 +20,7 @@ export type WarrantyCategory =
   | 'other';
 
 export interface WarrantyItem {
-  id: string;
+  _id: string;
   owner: string;
   title: string;
   category: WarrantyCategory;
