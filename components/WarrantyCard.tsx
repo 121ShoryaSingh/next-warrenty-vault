@@ -145,7 +145,7 @@ export default function WarrantyCard({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => onDelete(item.id)}
+                  onClick={() => onDelete(item._id)}
                   className="bg-red-600 hover:bg-red-700"
                 >
                   Delete
