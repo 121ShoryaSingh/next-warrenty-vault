@@ -180,7 +180,7 @@ export default function AddWarrentyItem() {
     <div className="pt-32 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="min-h-screen">
         <Section>
-          <div className="max-w-7xl py-10 bg-slate-950/50 mx-auto border border-slate-800 rounded-xl px-4">
+          <div className="max-w-7xl py-10  bg-slate-950/50 mx-auto border border-slate-800 rounded-xl px-4">
             <FieldSet>
               <form onSubmit={handleSubmit}>
                 <FieldLegend className="">
