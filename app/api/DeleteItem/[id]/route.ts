@@ -2,7 +2,7 @@ import { Db } from '@/lib/Db';
 import Item from '@/model/Item';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function Delete(
+export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -20,7 +20,7 @@ export async function Delete(
 
     await Db();
 
-    const item = Item.findByIdAndDelete({ id });
+    const item = await Item.findByIdAndDelete(id);
 
     if (!item) {
       return NextResponse.json(
