@@ -6,6 +6,7 @@ import WarrantyCard from './WarrantyCard';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Spinner } from './ui/spinner';
+import ItemDetailDialog from './ItemDetailDialog';
 
 export default function StoredItemCards() {
   const [warranties, setWarranties] = useState<WarrantyItem[]>([]);
@@ -16,10 +17,10 @@ export default function StoredItemCards() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete(`/api/delete/${id}`);
+      const response = await axios.delete(`/api/DeleteItem/${id}`);
       if (response.status === 200) {
         toast('Warranty item deleted successfully');
-        setWarranties(warranties.filter((item) => item.id !== id));
+        setWarranties(warranties.filter((item) => item._id !== id));
       }
     } catch (error) {
       console.error('Error deleting warranty item:', error);
@@ -177,6 +178,13 @@ export default function StoredItemCards() {
               )}
             </TabsContent>
           </Tabs>
+          {isDetailsOpen && selectedItem && (
+            <ItemDetailDialog
+              item={selectedItem}
+              onOpenChange={setIsDetailsOpen}
+              open={isDetailsOpen}
+            />
+          )}
         </>
       ) : (
         <div className="w-full bg-blue-950/50 flex gap-6 px-4 py-6 rounded-md">
