@@ -7,7 +7,7 @@ export async function DELETE(
   context: { params: { id: string } }
 ) {
   try {
-    const id = context.params.id;
+    const { id } = context.params;
 
     if (!id) {
       return NextResponse.json(
