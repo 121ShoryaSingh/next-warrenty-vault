@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     await user.save();
 
     // creating a unqiue url
-    const resetUrl = `${process.env.NEXT_PUBLIC_URL}/resetPassword/${passwordResetToken}`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/resetPassword/${passwordResetToken}`;
 
     // sending the unqiue url to verified email
     const transporter = nodemailer.createTransport({
