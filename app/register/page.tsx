@@ -90,7 +90,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 lg:pt-32 md:pt-16 sm:pt-8 pt-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 lg:pt-24 md:pt-16 sm:pt-8 pt-4">
       <Section className="flex-col items-center">
         <div className=" max-w-xl flex flex-col gap-8 mb-8 mx-auto">
           <Button
