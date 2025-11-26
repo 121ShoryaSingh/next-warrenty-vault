@@ -92,6 +92,14 @@ export default function Login() {
             <h2 className="text-slate-100 text-2xl font-medium text-center">
               Login
             </h2>
+            <div className="bg-blue-600/50 py-5 text-center border border-blue-600 rounded-xl">
+              <p className="text-slate-100">
+                For the demo purposes please use this credentails.
+              </p>
+              <p className="text-slate-100 text-sm mt-2">
+                Email: demo@example4.com, Password: demo12345
+              </p>
+            </div>
             <form onSubmit={handleSubmit}>
               {/* Email */}
               <FieldGroup>
